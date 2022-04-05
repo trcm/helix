@@ -52,6 +52,7 @@ diagnostic = { modifiers = ["underlined"] }
 "ui.cursor.primary" = { fg = "white", modifiers = ["reversed"] }
 "ui.cursor.match" = { fg = "blue", modifiers = ["underlined"]}
 
+"ui.highlight-line" = { bg = "#21242b"}
 "ui.selection" = { bg = "light-gray" }
 "ui.selection.primary" = { bg = "gray" }
 

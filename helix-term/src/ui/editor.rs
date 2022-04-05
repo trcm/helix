@@ -66,6 +66,29 @@ impl EditorView {
         &mut self.spinners
     }
 
+    pub fn highlight_current_line(
+        editor: &Editor,
+        _view: &View,
+        doc: &Document,
+        theme: &Theme,
+        surface: &mut Surface,
+    ) {
+        editor.tree.views().for_each(|(v, _b): (&View, bool)| {
+            // Highlight the current line
+            let view: &View = v;
+            let area: Rect = view.area;
+            let pos: usize = doc.selection(v.id).primary().cursor(doc.text().slice(..));
+
+            let x: Option<Position> = view.screen_coords_at_pos(doc, doc.text().slice(..), pos);
+            x.map(|c| {
+                surface.set_style(
+                    Rect::new(area.x, area.y + c.row as u16, area.width, 1),
+                    theme.get("ui.highlight-line"),
+                );
+            });
+        });
+    }
+
     pub fn render_view(
         &self,
         editor: &Editor,
@@ -111,6 +134,9 @@ impl EditorView {
                     );
                 }
             }
+        }
+        if editor.config().highlight_current_line {
+            Self::highlight_current_line(editor, view, doc, theme, surface);
         }
 
         let highlights = Self::doc_syntax_highlights(doc, view.offset, inner.height, theme);
