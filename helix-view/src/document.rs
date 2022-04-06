@@ -904,6 +904,10 @@ impl Document {
         &self.selections[&view_id]
     }
 
+    pub fn safe_selection(&self, view_id: ViewId) -> Option<&Selection> {
+        self.selections.get(&view_id)
+    }
+
     pub fn selections(&self) -> &HashMap<ViewId, Selection> {
         &self.selections
     }

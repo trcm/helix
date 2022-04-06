@@ -77,15 +77,21 @@ impl EditorView {
             // Highlight the current line
             let view: &View = v;
             let area: Rect = view.area;
-            let pos: usize = doc.selection(v.id).primary().cursor(doc.text().slice(..));
 
-            let x: Option<Position> = view.screen_coords_at_pos(doc, doc.text().slice(..), pos);
-            x.map(|c| {
-                surface.set_style(
-                    Rect::new(area.x, area.y + c.row as u16, area.width, 1),
-                    theme.get("ui.highlight-line"),
-                );
-            });
+            match doc.safe_selection(v.id) {
+                Some(p) => {
+                    let pos: usize = p.primary().cursor(doc.text().slice(..));
+                    let x: Option<Position> =
+                        view.screen_coords_at_pos(doc, doc.text().slice(..), pos);
+                    x.map(|c| {
+                        surface.set_style(
+                            Rect::new(area.x, area.y + c.row as u16, area.width, 1),
+                            theme.get("ui.highlight-line"),
+                        );
+                    });
+                }
+                None => (),
+            }
         });
     }
 
@@ -135,7 +141,7 @@ impl EditorView {
                 }
             }
         }
-        if editor.config().highlight_current_line {
+        if editor.config().highlight_current_line && is_focused {
             Self::highlight_current_line(editor, view, doc, theme, surface);
         }
 
